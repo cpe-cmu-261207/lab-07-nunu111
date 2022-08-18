@@ -8,13 +8,60 @@ import {
 } from "@tabler/icons";
 
 export default function Home() {
-  const deleteTodo = (idx) => {};
+  const [Todos, setTodos] = useState([]);
+  const [todoinput, setTodoinput] = useState("");
+  const [allcom, setAllcom] = useState(0);
 
-  const markTodo = (idx) => {};
+  const isthatall = () => {
+    let check = 0;
+    for (let i = 0; i < Todos.length; i++) {
+      if (Todos[i].completed === true) {
+        check += 1;
+      }
+    }
+    setAllcom(check);
+    console.log(allcom);
+  };
 
-  const moveUp = (idx) => {};
+  const deleteTodo = (idx) => {
+    Todos.splice(idx, 1);
+    const newTodos = [...Todos];
+    setTodos(newTodos);
+    isthatall();
+  };
 
-  const moveDown = (idx) => {};
+  const markTodo = (idx) => {
+    Todos[idx].completed = !Todos[idx].completed;
+    setTodos([...Todos]);
+    isthatall();
+  };
+
+  const moveUp = (idx) => {
+    if (idx === 0 || Todos.length === 1) return;
+    const onchange = Todos[idx];
+    Todos[idx] = Todos[idx - 1];
+    Todos[idx - 1] = onchange;
+    setTodos([...Todos]);
+  };
+
+  const moveDown = (idx) => {
+    if (idx === Todos.length - 1) return;
+    const onchange = Todos[idx];
+    Todos[idx] = Todos[idx + 1];
+    Todos[idx + 1] = onchange;
+    setTodos([...Todos]);
+  };
+
+  const inputchange = (event) => {
+    if (event.key !== "Enter") return;
+    if (event.target.value === "") {
+      alert("Todo cannot be emtry");
+      return;
+    }
+    const newTodo = [{ title: event.target.value, completed: false }, ...Todos];
+    setTodos(newTodo);
+    setTodoinput("");
+  };
 
   return (
     <div>
@@ -28,40 +75,36 @@ export default function Home() {
         <input
           className="form-control mb-1 fs-4"
           placeholder="insert todo here..."
+          onKeyUp={inputchange}
+          onChange={(event) => setTodoinput(event.target.value)}
+          value={todoinput}
         />
         {/* Todos */}
-        {/* Example 1 */}
-        <div className="border-bottom p-1 py-2 fs-2 d-flex gap-2">
-          <span className="me-auto">Todo</span>
-        </div>
-        {/* Example 2 */}
-        <div className="border-bottom p-1 py-2 fs-2 d-flex gap-2">
-          <span className="me-auto">Todo with buttons</span>
 
-          <button className="btn btn-success">
-            <IconCheck />
-          </button>
-          <button className="btn btn-secondary">
-            <IconArrowUp />
-          </button>
-          <button className="btn btn-secondary">
-            <IconArrowDown />
-          </button>
-          <button className="btn btn-danger">
-            <IconTrash />
-          </button>
-        </div>
+        {Todos.map((todonow, i) => (
+          <Todo
+            key={i}
+            title={todonow.title}
+            completed={todonow.completed}
+            onmoveUp={() => moveUp(i)}
+            onmoveDown={() => moveDown(i)}
+            onMark={() => markTodo(i)}
+            onDelete={() => deleteTodo(i)}
+          />
+        ))}
 
         {/* summary section */}
         <p className="text-center fs-4">
-          <span className="text-primary">All (2) </span>
-          <span className="text-warning">Pending (2) </span>
-          <span className="text-success">Completed (0)</span>
+          <span className="text-primary">All ({Todos.length}) </span>
+          <span className="text-warning">
+            Pending ({Todos.length - allcom}){" "}
+          </span>
+          <span className="text-success">Completed ({allcom})</span>
         </p>
 
         {/* Made by section */}
         <p className="text-center mt-3 text-muted fst-italic">
-          made by Chayanin Suatap 12345679
+          made by Phanuwat Ngoenthok 640610659
         </p>
       </div>
     </div>
