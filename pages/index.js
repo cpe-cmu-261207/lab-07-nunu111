@@ -53,7 +53,7 @@ export default function Home() {
   const inputchange = (event) => {
     if (event.key !== "Enter") return;
     if (event.target.value === "") {
-      alert("Todo cannot be emtry");
+      alert("Todo cannot be empty");
       return;
     }
     const newTodo = [{ title: event.target.value, completed: false }, ...Todos];
