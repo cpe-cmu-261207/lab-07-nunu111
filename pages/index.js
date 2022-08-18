@@ -11,6 +11,7 @@ export default function Home() {
   const [Todos, setTodos] = useState([]);
   const [todoinput, setTodoinput] = useState("");
   const [allcom, setAllcom] = useState(0);
+  const [isFirstRender, setIsFirstRender] = useState(true);
 
   const isthatall = () => {
     let check = 0;
@@ -20,24 +21,21 @@ export default function Home() {
       }
     }
     setAllcom(check);
-    console.log(allcom);
   };
 
   const deleteTodo = (idx) => {
     Todos.splice(idx, 1);
     const newTodos = [...Todos];
     setTodos(newTodos);
-    isthatall();
   };
 
   const markTodo = (idx) => {
     Todos[idx].completed = !Todos[idx].completed;
     setTodos([...Todos]);
-    isthatall();
   };
 
   const moveUp = (idx) => {
-    if (idx === 0 || Todos.length === 1) return;
+    if (idx === 0) return;
     const onchange = Todos[idx];
     Todos[idx] = Todos[idx - 1];
     Todos[idx - 1] = onchange;
@@ -62,6 +60,28 @@ export default function Home() {
     setTodos(newTodo);
     setTodoinput("");
   };
+
+  useEffect(() => {
+    if (isFirstRender) {
+      setIsFirstRender(false);
+      return;
+    }
+    saveTodos();
+    isthatall();
+  }, [Todos]); //เมื่อค่า todos เปลี่ยนแปลงจะเรียกใช้งาน
+
+  const saveTodos = () => {
+    const todoStr = JSON.stringify(Todos);
+    localStorage.setItem(`minimal-todos`, todoStr);
+  };
+
+  useEffect(() => {
+    const todoStr = localStorage.getItem(`minimal-todos`);
+    if (todoStr === null) setTodos([]);
+    else {
+      setTodos(JSON.parse(todoStr));
+    }
+  }, []);
 
   return (
     <div>
