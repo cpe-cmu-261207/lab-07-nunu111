@@ -64,11 +64,12 @@ export default function Home() {
   useEffect(() => {
     if (isFirstRender) {
       setIsFirstRender(false);
+      isthatall();
       return;
     }
     saveTodos();
     isthatall();
-  }, [Todos]); //เมื่อค่า todos เปลี่ยนแปลงจะเรียกใช้งาน
+  }, [Todos]);
 
   const saveTodos = () => {
     const todoStr = JSON.stringify(Todos);
